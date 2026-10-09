@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0E0F1A">
+<title>BOZOR — Admin Panel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#0E0F1A;
+  --surface:rgba(23,24,39,.78);
+  --surface2:#20223A;
+  --border:#2C2F4D;
+  --text:#F1F0FA;
+  --muted:#9C9EC0;
+  --accent:#B9A7FF;
+  --accentInk:#1A1038;
+  --peach:#FFB38A;
+  --danger:#FF6B6B;
+  --green:#73E2B5;
+  --glass:rgba(23,24,39,.78);
+  --shadow:0 18px 40px -18px rgba(0,0,0,.7);
+  --glow:
+    radial-gradient(60% 60% at 20% 0%,rgba(185,167,255,.20),transparent 70%),
+    radial-gradient(50% 50% at 100% 20%,rgba(255,179,138,.12),transparent 70%);
+}
+[data-theme="light"]{
+  --bg:#F3F4FA;
+  --surface:rgba(255,255,255,.82);
+  --surface2:#ECEEF8;
+  --border:#DADDEE;
+  --text:#15162B;
+  --muted:#62648A;
+  --accent:#6D4AFF;
+  --accentInk:#fff;
+  --peach:#D9531E;
+  --danger:#D93B3B;
+  --green:#12865D;
+  --glass:rgba(255,255,255,.82);
+  --shadow:0 18px 40px -20px rgba(60,50,140,.20);
+  --glow:
+    radial-gradient(60% 60% at 20% 0%,rgba(109,74,255,.12),transparent 70%),
+    radial-gradient(50% 50% at 100% 20%,rgba(255,138,91,.10),transparent 70%);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  background-image:var(--glow);
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:Manrope,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:active{transform:scale(.98)}
+.app{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:250px minmax(0,1fr);
+}
+.sidebar{
+  position:sticky;
+  top:0;
+  height:100vh;
+  padding:24px 16px;
+  border-right:1px solid var(--border);
+  background:var(--glass);
+  backdrop-filter:blur(24px);
+  -webkit-backdrop-filter:blur(24px);
+  display:flex;
+  flex-direction:column;
+  z-index:5;
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:4px 10px 28px;
+}
+.brand-mark{
+  width:42px;
+  height:42px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--peach));
+  color:var(--accentInk);
+  font:700 19px Unbounded;
+  box-shadow:0 8px 24px #b9a7ff30;
+}
+.brand-name{
+  font:700 17px Unbounded;
+  letter-spacing:-.7px;
+}
+.brand-sub{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:1.5px;
+  margin-top:4px;
+}
+.nav-label{
+  padding:14px 12px 8px;
+  font-size:10px;
+  color:var(--muted);
+  font-weight:800;
+  letter-spacing:1.5px;
+}
+.nav{display:grid;gap:5px}
+.nav button{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  width:100%;
+  border:1px solid transparent;
+  border-radius:14px;
+  padding:12px 13px;
+  background:transparent;
+  color:var(--muted);
+  text-align:left;
+  font-size:13px;
+  font-weight:800;
+  transition:.2s;
+}
+.nav button:hover{
+  background:var(--surface2);
+  color:var(--text);
+}
+.nav button.active{
+  background:linear-gradient(
+    120deg,
+    color-mix(in srgb,var(--accent) 20%,transparent),
+    color-mix(in srgb,var(--peach) 7%,transparent)
+  );
+  border-color:color-mix(in srgb,var(--accent) 30%,var(--border));
+  color:var(--text);
+}
+.nav .ico{width:22px;text-align:center;font-size:17px}
+.nav .count{
+  margin-left:auto;
+  padding:3px 7px;
+  border-radius:8px;
+  background:var(--surface2);
+  font-size:10px;
+}
+.side-bottom{margin-top:auto}
+.status-card{
+  padding:14px;
+  border:1px solid var(--border);
+  border-radius:18px;
+  background:var(--surface);
+  margin:18px 2px;
+}
+.status-top{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:11px;
+  font-weight:800;
+}
+.dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+.status-card p{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.6;
+  margin:8px 0 0;
+}
+.main{
+  min-width:0;
+  padding:28px clamp(16px,3vw,42px) 48px;
+  max-width:1600px;
+  width:100%;
+  margin:auto;
+}
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:30px;
+}
+.eyebrow{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.8px;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+.page-title{
+  font:600 clamp(23px,3vw,34px) Unbounded;
+  margin:8px 0 0;
+  letter-spacing:-1.2px;
+}
+.page-sub{
+  font-size:12px;
+  color:var(--muted);
+  margin:9px 0 0;
+}
+.actions{display:flex;align-items:center;gap:10px}
+.icon-btn,.profile-btn{
+  border:1px solid var(--border);
+  background:var(--glass);
+  backdrop-filter:blur(16px);
+  color:var(--text);
+  border-radius:14px;
+  min-height:44px;
+  padding:0 13px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.icon-btn{
+  width:44px;
+  justify-content:center;
+  font-size:17px;
+}
+.profile-btn{font-size:12px;font-weight:800}
+.avatar{
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--accent),var(--peach));
+  color:var(--accentInk);
+  font-size:11px;
+  font-weight:900;
+}
+.section{display:none;animation:fade .22s ease}
+.section.active{display:block}
+@keyframes fade{
+  from{opacity:.45;transform:translateY(4px)}
+  to{opacity:1;transform:translateY(0)}
+}
+.welcome{
+  position:relative;
+  overflow:hidden;
+  padding:27px 29px;
+  border:1px solid color-mix(in srgb,var(--accent) 30%,var(--border));
+  border-radius:25px;
+  background:linear-gradient(
+    110deg,
+    color-mix(in srgb,var(--accent) 16%,var(--surface)),
+    var(--surface) 60%,
+    color-mix(in srgb,var(--peach) 9%,var(--surface))
+  );
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+.welcome:after{
+  content:"B";
+  position:absolute;
+  right:35px;
+  top:-38px;
+  font:700 180px Unbounded;
+  color:var(--accent);
+  opacity:.07;
+  pointer-events:none;
+}
+.welcome h2{
+  font:600 clamp(19px,2.4vw,27px) Unbounded;
+  letter-spacing:-.8px;
+  margin:0 0 10px;
+  max-width:680px;
+}
+.welcome p{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.8;
+  max-width:560px;
+  margin:0;
+}
+.welcome strong{color:var(--peach)}
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:14px;
+  margin:0 0 22px;
+}
+.stat{
+  border:1px solid var(--border);
+  background:var(--surface);
+  backdrop-filter:blur(20px);
+  border-radius:20px;
+  padding:18px;
+  min-width:0;
+  box-shadow:var(--shadow);
+}
+.stat-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+.stat-label{font-size:11px;color:var(--muted);font-weight:800}
+.stat-ico{
+  width:35px;
+  height:35px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:color-mix(in srgb,var(--accent) 14%,transparent);
+  font-size:16px;
+}
+.stat-value{
+  font:600 clamp(22px,2.4vw,30px) Unbounded;
+  margin:16px 0 7px;
+  letter-spacing:-1px;
+  overflow-wrap:anywhere;
+}
+.stat-foot{font-size:10px;color:var(--muted)}
+.stat-foot b{color:var(--green)}
+.grid-two{
+  display:grid;
+  grid-template-columns:minmax(0,1.5fr) minmax(260px,.9fr);
+  gap:16px;
+}
+.panel{
+  border:1px solid var(--border);
+  background:var(--surface);
+  backdrop-filter:blur(20px);
+  border-radius:21px;
+  padding:20px;
+  min-width:0;
+  box-shadow:var(--shadow);
+}
+.panel-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.panel-title{
+  font:600 14px Unbounded;
+  letter-spacing:-.4px;
+  margin:0;
+}
+.panel-caption{font-size:10px;color:var(--muted);margin-top:6px}
+.text-btn{
+  border:0;
+  background:transparent;
+  color:var(--accent);
+  font-size:11px;
+  font-weight:900;
+  padding:7px;
+}
+.activity{display:grid;gap:15px}
+.activity-row{display:flex;align-items:center;gap:12px}
+.activity-ico{
+  width:38px;
+  height:38px;
+  flex-shrink:0;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:var(--surface2);
+}
+.activity-copy{min-width:0;flex:1}
+.activity-copy strong{display:block;font-size:11px}
+.activity-copy span{
+  display:block;
+  font-size:10px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.activity-time{font-size:10px;color:var(--muted);white-space:nowrap}
+.bar-list{display:grid;gap:17px}
+.bar-row{
+  display:grid;
+  grid-template-columns:95px minmax(0,1fr) 28px;
+  align-items:center;
+  gap:10px;
+  font-size:11px;
+}
+.bar-track{
+  height:7px;
+  border-radius:99px;
+  background:var(--surface2);
+  overflow:hidden;
+}
+.bar-fill{
+  height:100%;
+  border-radius:99px;
+  background:linear-gradient(90deg,var(--accent),var(--peach));
+  width:0;
+  transition:width .4s;
+}
+.bar-num{text-align:right;color:var(--muted);font-size:10px}
+.toolbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+}
+.searchbox{position:relative;flex:1;min-width:180px}
+.searchbox span{
+  position:absolute;
+  left:13px;
+  top:50%;
+  transform:translateY(-50%);
+  color:var(--muted);
+}
+.searchbox input{
+  width:100%;
+  height:43px;
+  padding:0 13px 0 38px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  outline:none;
+  font-size:12px;
+}
+.searchbox input:focus,.filter:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 15%,transparent);
+}
+.filter{
+  height:43px;
+  padding:0 12px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:var(--surface);
+  color:var(--text);
+  font-size:11px;
+  outline:none;
+}
+.primary-btn{
+  border:0;
+  border-radius:13px;
+  background:var(--accent);
+  color:var(--accentInk);
+  font-size:11px;
+  font-weight:900;
+  padding:13px 16px;
+  box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 20%,transparent);
+}
+.table-wrap{
+  overflow:auto;
+  border:1px solid var(--border);
+  border-radius:15px;
+}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th{
+  text-align:left;
+  font-size:9px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:13px 14px;
+  background:color-mix(in srgb,var(--surface2) 70%,transparent);
+  font-weight:900;
+}
+td{
+  padding:13px 14px;
+  border-top:1px solid var(--border);
+  font-size:11px;
+  vertical-align:middle;
+}
+tbody tr:hover{background:color-mix(in srgb,var(--accent) 4%,transparent)}
+.product-cell{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:190px;
+}
+.product-img{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  object-fit:cover;
+  background:var(--surface2);
+  border:1px solid var(--border);
+}
+.product-name{
+  font-weight:800;
+  max-width:210px;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.product-meta{font-size:10px;color:var(--muted);margin-top:5px}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  border-radius:999px;
+  padding:6px 9px;
+  font-size:9px;
+  font-weight:900;
+  background:color-mix(in srgb,var(--green) 12%,transparent);
+  color:var(--green);
+  white-space:nowrap;
+}
+.pill.pending{
+  background:color-mix(in srgb,var(--peach) 14%,transparent);
+  color:var(--peach);
+}
+.pill.blocked{
+  background:color-mix(in srgb,var(--danger) 12%,transparent);
+  color:var(--danger);
+}
+.row-actions{display:flex;gap:6px}
+.small-btn{
+  border:1px solid var(--border);
+  background:var(--surface2);
+  color:var(--text);
+  border-radius:9px;
+  padding:7px 9px;
+  font-size:10px;
+  font-weight:900;
+}
+.small-btn.danger{color:var(--danger)}
+.empty{
+  padding:35px 12px;
+  text-align:center;
+  color:var(--muted);
+  font-size:12px;
+}
+.empty b{display:block;font-size:24px;margin-bottom:10px}
+.users-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:13px;
+}
+.user-card{
+  border:1px solid var(--border);
+  background:var(--surface);
+  border-radius:17px;
+  padding:16px;
+}
+.user-head{display:flex;align-items:center;gap:10px}
+.user-avatar{
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--accent),var(--peach));
+  color:var(--accentInk);
+  font-weight:900;
+}
+.user-name{font-weight:900;font-size:12px;overflow-wrap:anywhere}
+.user-info{
+  font-size:10px;
+  color:var(--muted);
+  margin-top:5px;
+  overflow-wrap:anywhere;
+}
+.user-card .row-actions{margin-top:15px}
+.notice{
+  border:1px solid color-mix(in srgb,var(--peach) 35%,var(--border));
+  background:color-mix(in srgb,var(--peach) 7%,var(--surface));
+  padding:14px 16px;
+  border-radius:15px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.7;
+  margin-bottom:18px;
+}
+.notice strong{color:var(--peach)}
+.category-grid{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:12px;
+}
+.category-card{
+  border:1px solid var(--border);
+  background:var(--surface);
+  border-radius:16px;
+  padding:17px;
+}
+.category-card .emoji{font-size:22px}
+.category-card h3{font-size:12px;margin:11px 0 5px}
+.category-card p{font-size:10px;color:var(--muted);margin:0}
+.toast{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:20;
+  background:var(--surface2);
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  padding:13px 17px;
+  border-radius:14px;
+  font-size:12px;
+  opacity:0;
+  transform:translateY(10px);
+  pointer-events:none;
+  transition:.2s;
+}
+.toast.show{opacity:1;transform:translateY(0)}
+.mobile-menu{display:none}
+
+@media(max-width:1100px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid-two{grid-template-columns:1fr}
+  .users-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .app{grid-template-columns:1fr}
+  .sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:260px;
+    height:100dvh;
+    transform:translateX(-105%);
+    transition:transform .25s;
+    box-shadow:var(--shadow);
+  }
+  .sidebar.open{transform:translateX(0)}
+  .mobile-menu{display:flex}
+  .main{padding:20px 14px 35px}
+  .topbar{align-items:flex-start}
+  .page-title{font-size:22px}
+  .page-sub{max-width:240px;line-height:1.5}
+  .profile-btn .profile-text{display:none}
+  .welcome{padding:22px 20px}
+  .welcome:after{right:4px;font-size:130px}
+  .stats{gap:10px}
+  .stat{padding:14px;border-radius:17px}
+  .stat-value{font-size:22px}
+  .panel{padding:15px}
+  .users-grid,.category-grid{grid-template-columns:1fr}
+  .activity-time{display:none}
+  .toolbar{align-items:stretch}
+  .filter{flex:1;min-width:120px}
+  .actions{gap:6px}
+  .profile-btn{padding:0 9px}
+}
+</style>
+</head>
+
+<body>
+<div id="adminLogin" style="position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;overflow:hidden;background:radial-gradient(ellipse at 16% 18%,rgba(185,167,255,.24),transparent 38%),radial-gradient(ellipse at 84% 78%,rgba(255,179,138,.17),transparent 36%),linear-gradient(135deg,#0b0c16,#171827 52%,#10111e);color:#f1f0fa;font-family:Manrope,Arial,sans-serif">
+  <div aria-hidden="true" style="position:absolute;width:340px;height:340px;border:1px solid rgba(185,167,255,.18);border-radius:50%;top:-130px;right:-90px;box-shadow:0 0 80px rgba(185,167,255,.12),inset 0 0 50px rgba(185,167,255,.06)"></div>
+  <div aria-hidden="true" style="position:absolute;width:260px;height:260px;border:1px solid rgba(255,179,138,.16);border-radius:50%;bottom:-115px;left:-70px;box-shadow:0 0 70px rgba(255,179,138,.1),inset 0 0 45px rgba(255,179,138,.05)"></div>
+  <form id="adminLoginForm" style="width:min(100%,380px);padding:28px;border:1px solid #2c2f4d;border-radius:22px;background:#171827;box-shadow:0 18px 40px -18px rgba(0,0,0,.7)">
+    <div style="font-size:22px;font-weight:800;margin-bottom:8px">Admin panelga kirish</div>
+    <label for="adminPassword" style="display:block;color:#9c9ec0;font-size:14px;margin-bottom:8px">Parol</label>
+    <input id="adminPassword" type="password" autocomplete="current-password" required autofocus style="box-sizing:border-box;width:100%;padding:13px 14px;border:1px solid #2c2f4d;border-radius:12px;background:#20223a;color:#f1f0fa;font-size:16px;outline:none">
+    <p id="adminLoginError" role="alert" style="display:none;color:#ff6b6b;font-size:13px;margin:9px 0 0">Parol noto'g'ri. Qayta urinib ko'ring.</p>
+    <button type="submit" style="width:100%;margin-top:16px;padding:13px;border:0;border-radius:12px;background:#b9a7ff;color:#1a1038;font-size:15px;font-weight:800;cursor:pointer">Kirish</button>
+  </form>
+</div>
+<div class="app">
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-mark">B</div>
+      <div>
+        <div class="brand-name">BOZOR</div>
+        <div class="brand-sub">ADMIN CONSOLE</div>
+      </div>
+    </div>
+
+    <div class="nav-label">BOSHQARUV</div>
+    <nav class="nav">
+      <button class="active" data-page="overview">
+        <span class="ico">◈</span> Bosh panel
+      </button>
+      <button data-page="listings">
+        <span class="ico">▤</span> E’lonlar
+        <span class="count" id="navListings">0</span>
+      </button>
+      <button data-page="users">
+        <span class="ico">♙</span> Foydalanuvchilar
+        <span class="count" id="navUsers">0</span>
+      </button>
+      <button data-page="categories">
+        <span class="ico">▦</span> Kategoriyalar
+      </button>
+    </nav>
+
+    <div class="nav-label">TIZIM</div>
+    <nav class="nav">
+      <button data-page="settings">
+        <span class="ico">⚙</span> Sozlamalar
+      </button>
+      <button id="openSite">
+        <span class="ico">↗</span> Saytni ochish
+      </button>
+    </nav>
+
+    <div class="side-bottom">
+      <div class="status-card">
+        <div class="status-top">
+          <span class="dot"></span> Panel faol
+        </div>
+        <p>BOZOR e’lonlari va foydalanuvchilarini boshqarish uchun boshqaruv oynasi.</p>
+      </div>
+
+      <button id="refreshBtn"
+        style="display:flex;align-items:center;gap:10px;width:100%;border:1px solid var(--border);border-radius:13px;padding:12px;background:var(--surface);color:var(--text);font-size:12px;font-weight:800">
+        <span>↻</span> Ma’lumotni yangilash
+      </button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <button class="icon-btn mobile-menu" id="menuBtn" aria-label="Menyuni ochish">☰</button>
+        <div>
+          <div class="eyebrow">BOZOR / ADMIN</div>
+          <h1 class="page-title" id="pageTitle">Bosh panel</h1>
+          <p class="page-sub" id="pageSub">Platformangiz holatini bir joydan nazorat qiling.</p>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="icon-btn" id="themeBtn" title="Mavzuni almashtirish">☼</button>
+        <button class="profile-btn">
+          <span class="avatar">A</span>
+          <span class="profile-text">Administrator</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- BOSH PANEL -->
+    <section class="section active" id="page-overview">
+      <div class="welcome">
+        <h2>Salom, administrator 👋</h2>
+        <p><strong>BOZOR</strong> boshqaruv paneliga xush kelibsiz. E’lonlarni ko‘ring, foydalanuvchilarni kuzating va platforma faoliyatini boshqaring.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-head">
+            <span class="stat-label">Jami e’lonlar</span>
+            <span class="stat-ico">▤</span>
+          </div>
+          <div class="stat-value" id="statListings">0</div>
+          <div class="stat-foot"><b>●</b> Saytdagi e’lonlar</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-head">
+            <span class="stat-label">Foydalanuvchilar</span>
+            <span class="stat-ico">♙</span>
+          </div>
+          <div class="stat-value" id="statUsers">0</div>
+          <div class="stat-foot">Ro‘yxatdan o‘tgan hisoblar</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-head">
+            <span class="stat-label">Sevimlilar</span>
+            <span class="stat-ico">♡</span>
+          </div>
+          <div class="stat-value" id="statFavorites">0</div>
+          <div class="stat-foot">Saqlangan e’lonlar</div>
+        </div>
+
+        <div class="stat">
+          <div class="stat-head">
+            <span class="stat-label">E’lonlar qiymati</span>
+            <span class="stat-ico">◉</span>
+          </div>
+          <div class="stat-value" id="statValue">0</div>
+          <div class="stat-foot">Barcha e’lonlar narxi yig‘indisi</div>
+        </div>
+      </div>
+
+      <div class="grid-two">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">So‘nggi e’lonlar</h2>
+              <div class="panel-caption">Platformaga joylangan e’lonlar</div>
+            </div>
+            <button class="text-btn" data-go="listings">Barchasini ko‘r →</button>
+          </div>
+          <div id="recentListings" class="activity"></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h2 class="panel-title">Kategoriyalar</h2>
+              <div class="panel-caption">E’lonlar taqsimoti</div>
+            </div>
+          </div>
+          <div id="categoryBars" class="bar-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- E'LONLAR -->
+    <section class="section" id="page-listings">
+      <div class="notice">
+        <strong>Eslatma:</strong> bu panel sayt bilan bir xil brauzerda saqlanadigan BOZOR ma’lumotlarini o‘qiydi. E’lonni o‘chirish asosiy saytdagi shu brauzer ma’lumotidan ham o‘chiradi.
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">E’lonlarni boshqarish</h2>
+            <div class="panel-caption" id="listingCountLabel">Barcha e’lonlar</div>
+          </div>
+          <button class="primary-btn" id="exportBtn">↓ CSV yuklash</button>
+        </div>
+
+        <div class="toolbar">
+          <div class="searchbox">
+            <span>⌕</span>
+            <input id="listingSearch" placeholder="E’lon nomi, telefon yoki manzil..." autocomplete="off">
+          </div>
+          <select class="filter" id="categoryFilter">
+            <option value="">Barcha kategoriyalar</option>
+          </select>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>E’lon</th>
+                <th>Kategoriya</th>
+                <th>Narx</th>
+                <th>Telefon</th>
+                <th>Amallar</th>
+              </tr>
+            </thead>
+            <tbody id="listingRows"></tbody>
+          </table>
+          <div id="listingEmpty" class="empty" hidden>
+            <b>⌕</b>E’lon topilmadi
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOYDALANUVCHILAR -->
+    <section class="section" id="page-users">
+      <div class="notice">
+        <strong>Foydalanuvchilar:</strong> ro‘yxat BOZOR saytining brauzerda saqlangan foydalanuvchi ma’lumotlaridan tuziladi. Haqiqiy onlayn boshqaruv uchun server bazasi va administrator avtorizatsiyasi kerak.
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Foydalanuvchilar</h2>
+            <div class="panel-caption" id="userCountLabel">Ro‘yxatdan o‘tgan hisoblar</div>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <div class="searchbox">
+            <span>⌕</span>
+            <input id="userSearch" placeholder="Ism yoki telefon bo‘yicha qidirish..." autocomplete="off">
+          </div>
+        </div>
+
+        <div id="usersGrid" class="users-grid"></div>
+        <div id="usersEmpty" class="empty" hidden>
+          <b>♙</b>Hozircha foydalanuvchilar yo‘q
+        </div>
+      </div>
+    </section>
+
+    <!-- KATEGORIYALAR -->
+    <section class="section" id="page-categories">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Kategoriyalar</h2>
+            <div class="panel-caption">Saytdagi e’lonlarning kategoriyalari</div>
+          </div>
+        </div>
+        <div id="categoryGrid" class="category-grid"></div>
+      </div>
+    </section>
+
+    <!-- SOZLAMALAR -->
+    <section class="section" id="page-settings">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">Panel sozlamalari</h2>
+            <div class="panel-caption">Ko‘rinish va ma’lumotlar</div>
+          </div>
+        </div>
+
+        <div class="activity">
+          <div class="activity-row">
+            <div class="activity-ico">◐</div>
+            <div class="activity-copy">
+              <strong>Interfeys mavzusi</strong>
+              <span>Asosiy BOZOR saytiga mos tungi yoki yorug‘ rejim.</span>
+            </div>
+            <button class="small-btn" id="settingsTheme">Mavzuni almashtirish</button>
+          </div>
+
+          <div class="activity-row">
+            <div class="activity-ico">↻</div>
+            <div class="activity-copy">
+              <strong>Ma’lumotlarni yangilash</strong>
+              <span>localStorage ichidagi e’lon va foydalanuvchilarni qayta o‘qish.</span>
+            </div>
+            <button class="small-btn" id="settingsRefresh">Yangilash</button>
+          </div>
+
+          <div class="activity-row">
+            <div class="activity-ico">↓</div>
+            <div class="activity-copy">
+              <strong>E’lonlar ro‘yxatini eksport qilish</strong>
+              <span>Joriy e’lonlarni CSV faylga saqlash.</span>
+            </div>
+            <button class="small-btn" id="settingsExport">CSV yuklash</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top:16px">
+        <strong>Xavfsizlik haqida:</strong> hozirgi sayt ma’lumotlari localStorage’da. Bu alohida admin panelni haqiqiy himoyalangan qilish uchun backend, ma’lumotlar bazasi va server tomonda tekshiriladigan admin huquqi zarur. Frontend ichidagi parol haqiqiy xavfsizlik bermaydi.
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const KEYS = {
+  products: "bozor_products_v1",
+  users: "bozor_users_v1",
+  favorites: "bozor_favorites_v1",
+  theme: "bozor_admin_theme"
+};
+
+const CAT = {
+  phones: {name:"Telefonlar",emoji:"📱"},
+  auto: {name:"Avtomobillar",emoji:"🚗"},
+  home: {name:"Uy va mebel",emoji:"🛋️"},
+  electronics: {name:"Elektronika",emoji:"💻"},
+  clothes: {name:"Kiyimlar",emoji:"👕"},
+  sport: {name:"Sport",emoji:"🚲"},
+  tools: {name:"Asboblar",emoji:"🛠️"},
+  school: {name:"O‘quv qurollari",emoji:"📚"},
+  other: {name:"Boshqa",emoji:"📦"}
+};
+
+const $ = id => document.getElementById(id);
+let products = [];
+let users = [];
+let favorites = [];
+
+const adminLogin = $("adminLogin");
+const adminLoginForm = $("adminLoginForm");
+if (sessionStorage.getItem("bozor_admin_authenticated") === "true") {
+  adminLogin.remove();
+} else {
+  document.querySelector(".app").inert = true;
+  adminLoginForm.addEventListener("submit", event => {
+    event.preventDefault();
+    if ($("adminPassword").value === "parol1234") {
+      sessionStorage.setItem("bozor_admin_authenticated", "true");
+      adminLogin.remove();
+      document.querySelector(".app").inert = false;
+    } else {
+      $("adminLoginError").style.display = "block";
+      $("adminPassword").select();
+    }
+  });
+}
+
+const safeParse = (key, fallback = []) => {
+  try {
+    const value = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(value) ? value : fallback;
+  } catch {
+    return fallback;
+  }
+};
+
+const localized = value =>
+  typeof value === "string"
+    ? value
+    : (value?.uz || value?.ru || value?.en || "");
+
+const money = value =>
+  new Intl.NumberFormat("uz-UZ").format(Number(value) || 0) + " so‘m";
+
+const escapeHTML = value =>
+  String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+
+function toast(message) {
+  const element = $("toast");
+  element.textContent = message;
+  element.classList.add("show");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => element.classList.remove("show"), 2400);
+}
+
+function loadData() {
+  products = safeParse(KEYS.products);
+  users = safeParse(KEYS.users);
+  favorites = safeParse(KEYS.favorites);
+  renderAll();
+}
+
+function categoryName(key) {
+  return CAT[key]?.name || key || "Boshqa";
+}
+
+function categoryEmoji(key) {
+  return CAT[key]?.emoji || "📦";
+}
+
+function renderAll() {
+  renderStats();
+  renderRecent();
+  renderBars();
+  renderListings();
+  renderUsers();
+  renderCategories();
+
+  $("navListings").textContent = products.length;
+  $("navUsers").textContent = users.length;
+  $("listingCountLabel").textContent = `Jami ${products.length} ta e’lon`;
+  $("userCountLabel").textContent = `Jami ${users.length} ta foydalanuvchi`;
+}
+
+function renderStats() {
+  const total = products.reduce(
+    (sum, product) => sum + (Number(product.price) || 0),
+    0
+  );
+
+  $("statListings").textContent = products.length.toLocaleString("uz-UZ");
+  $("statUsers").textContent = users.length.toLocaleString("uz-UZ");
+  $("statFavorites").textContent = favorites.length.toLocaleString("uz-UZ");
+
+  $("statValue").textContent =
+    total >= 1e9
+      ? (total / 1e9).toFixed(1) + " mlrd"
+      : total >= 1e6
+        ? (total / 1e6).toFixed(1) + " mln"
+        : new Intl.NumberFormat("uz-UZ").format(total);
+
+  $("statValue").title = money(total);
+}
+
+function renderRecent() {
+  const list = [...products].slice(-5).reverse();
+
+  $("recentListings").innerHTML = list.length
+    ? list.map(product => `
+      <div class="activity-row">
+        <div class="activity-ico">${categoryEmoji(product.cat)}</div>
+        <div class="activity-copy">
+          <strong>${escapeHTML(localized(product.title) || "Nomsiz e’lon")}</strong>
+          <span>${escapeHTML(localized(product.loc) || "Manzil ko‘rsatilmagan")} · ${money(product.price)}</span>
+        </div>
+        <span class="activity-time">#${escapeHTML(product.id)}</span>
+      </div>
+    `).join("")
+    : `<div class="empty"><b>▤</b>Hozircha e’lonlar yo‘q</div>`;
+}
+
+function renderBars() {
+  const counts = Object.keys(CAT)
+    .map(key => ({
+      key,
+      count: products.filter(product => product.cat === key).length
+    }))
+    .filter(item =>
+      item.count ||
+      ["phones","auto","home","electronics","clothes","sport"].includes(item.key)
+    )
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+
+  const max = Math.max(1, ...counts.map(item => item.count));
+
+  $("categoryBars").innerHTML = counts.map(item => `
+    <div class="bar-row">
+      <span>${categoryEmoji(item.key)} ${categoryName(item.key)}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${item.count / max * 100}%"></div>
+      </div>
+      <span class="bar-num">${item.count}</span>
+    </div>
+  `).join("");
+}
+
+function renderListings() {
+  const query = $("listingSearch").value.trim().toLocaleLowerCase();
+  const category = $("categoryFilter").value;
+
+  const rows = products.filter(product => {
+    const haystack = [
+      localized(product.title),
+      localized(product.loc),
+      product.phone,
+      localized(product.desc)
+    ].join(" ").toLocaleLowerCase();
+
+    return (!query || haystack.includes(query)) &&
+      (!category || product.cat === category);
+  }).slice().reverse();
+
+  $("listingRows").innerHTML = rows.map(product => `
+    <tr>
+      <td>
+        <div class="product-cell">
+          <img
+            class="product-img"
+            src="${escapeHTML(product.photo || "")}"
+            onerror="this.style.display='none'"
+            alt=""
+          >
+          <div>
+            <div class="product-name" title="${escapeHTML(localized(product.title))}">
+              ${escapeHTML(localized(product.title) || "Nomsiz e’lon")}
+            </div>
+            <div class="product-meta">
+              ID: ${escapeHTML(product.id)} · ${escapeHTML(localized(product.loc) || "Manzil yo‘q")}
+            </div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <span class="pill pending">
+          ${categoryEmoji(product.cat)} ${escapeHTML(categoryName(product.cat))}
+        </span>
+      </td>
+      <td><strong>${money(product.price)}</strong></td>
+      <td>${escapeHTML(product.phone || "—")}</td>
+      <td>
+        <div class="row-actions">
+          <button class="small-btn" data-view="${escapeHTML(product.id)}">Ko‘rish</button>
+          <button class="small-btn danger" data-delete="${escapeHTML(product.id)}">O‘chirish</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  $("listingEmpty").hidden = rows.length > 0;
+
+  $("listingRows").querySelectorAll("[data-view]").forEach(button => {
+    button.addEventListener("click", () => viewListing(button.dataset.view));
+  });
+
+  $("listingRows").querySelectorAll("[data-delete]").forEach(button => {
+    button.addEventListener("click", () => deleteListing(button.dataset.delete));
+  });
+}
+
+function renderUsers() {
+  const query = $("userSearch").value.trim().toLocaleLowerCase();
+
+  const list = users.filter(user =>
+    [user.name, user.phone, user.username, user.id]
+      .join(" ")
+      .toLocaleLowerCase()
+      .includes(query)
+  );
+
+  $("usersGrid").innerHTML = list.map(user => {
+    const name = user.name || user.username || "Foydalanuvchi";
+
+    return `
+      <div class="user-card">
+        <div class="user-head">
+          <div class="user-avatar">${escapeHTML(name.slice(0, 1).toUpperCase())}</div>
+          <div>
+            <div class="user-name">${escapeHTML(name)}</div>
+            <div class="user-info">${escapeHTML(user.phone || user.id || "Hisob")}</div>
+          </div>
+        </div>
+        <div class="user-info">ID: ${escapeHTML(user.id || "—")}</div>
+      </div>
+    `;
+  }).join("");
+
+  $("usersEmpty").hidden = list.length > 0;
+}
+
+function renderCategories() {
+  $("categoryGrid").innerHTML = Object.entries(CAT).map(([key, category]) => {
+    const count = products.filter(product => product.cat === key).length;
+
+    return `
+      <div class="category-card">
+        <div class="emoji">${category.emoji}</div>
+        <h3>${escapeHTML(category.name)}</h3>
+        <p>${count} ta e’lon</p>
+      </div>
+    `;
+  }).join("");
+
+  const select = $("categoryFilter");
+  const current = select.value;
+
+  select.innerHTML =
+    '<option value="">Barcha kategoriyalar</option>' +
+    Object.entries(CAT).map(([key, category]) =>
+      `<option value="${key}">${category.emoji} ${escapeHTML(category.name)}</option>`
+    ).join("");
+
+  select.value = current;
+}
+
+function viewListing(id) {
+  const product = products.find(item => String(item.id) === String(id));
+  if (!product) return;
+
+  alert(
+    `${localized(product.title) || "E’lon"}\n\n` +
+    `Narx: ${money(product.price)}\n` +
+    `Kategoriya: ${categoryName(product.cat)}\n` +
+    `Manzil: ${localized(product.loc) || "—"}\n` +
+    `Telefon: ${product.phone || "—"}\n\n` +
+    `${localized(product.desc) || ""}`
+  );
+}
+
+function deleteListing(id) {
+  const product = products.find(item => String(item.id) === String(id));
+  if (!product) return;
+
+  const confirmed = confirm(
+    `“${localized(product.title) || "E’lon"}” o‘chirilsinmi? Bu amalni qaytarib bo‘lmaydi.`
+  );
+
+  if (!confirmed) return;
+
+  products = products.filter(item => String(item.id) !== String(id));
+  localStorage.setItem(KEYS.products, JSON.stringify(products));
+
+  favorites = favorites.filter(item => String(item) !== String(id));
+  localStorage.setItem(KEYS.favorites, JSON.stringify(favorites));
+
+  renderAll();
+  toast("E’lon o‘chirildi");
+}
+
+function exportCSV() {
+  const header = [
+    "ID",
+    "Sarlavha",
+    "Kategoriya",
+    "Narx",
+    "Telefon",
+    "Manzil",
+    "Tavsif"
+  ];
+
+  const rows = products.map(product => [
+    product.id,
+    localized(product.title),
+    categoryName(product.cat),
+    product.price,
+    product.phone,
+    localized(product.loc),
+    localized(product.desc)
+  ]);
+
+  const csv = [header, ...rows]
+    .map(row =>
+      row.map(value =>
+        `"${String(value ?? "").replace(/"/g, '""')}"`
+      ).join(",")
+    )
+    .join("\r\n");
+
+  const blob = new Blob(["\ufeff" + csv], {
+    type: "text/csv;charset=utf-8;"
+  });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = "bozor-elanlar.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+  toast("CSV fayl tayyor");
+}
+
+const pageInfo = {
+  overview: [
+    "Bosh panel",
+    "Platformangiz holatini bir joydan nazorat qiling."
+  ],
+  listings: [
+    "E’lonlar",
+    "E’lonlarni qidirish, ko‘rish va boshqarish."
+  ],
+  users: [
+    "Foydalanuvchilar",
+    "Ro‘yxatdan o‘tgan hisoblarni ko‘rib chiqing."
+  ],
+  categories: [
+    "Kategoriyalar",
+    "E’lonlar qaysi bo‘limlarga tegishli ekanini kuzating."
+  ],
+  settings: [
+    "Sozlamalar",
+    "Admin panel ko‘rinishi va boshqaruv parametrlari."
+  ]
+};
+
+function goPage(page) {
+  document.querySelectorAll(".section").forEach(section => {
+    section.classList.toggle("active", section.id === "page-" + page);
+  });
+
+  document.querySelectorAll("[data-page]").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === page);
+  });
+
+  $("pageTitle").textContent = pageInfo[page][0];
+  $("pageSub").textContent = pageInfo[page][1];
+  $("sidebar").classList.remove("open");
+
+  if (page === "listings") renderListings();
+  if (page === "users") renderUsers();
+}
+
+document.querySelectorAll("[data-page]").forEach(button => {
+  button.addEventListener("click", () => goPage(button.dataset.page));
+});
+
+document.querySelectorAll("[data-go]").forEach(button => {
+  button.addEventListener("click", () => goPage(button.dataset.go));
+});
+
+$("listingSearch").addEventListener("input", renderListings);
+$("categoryFilter").addEventListener("change", renderListings);
+$("userSearch").addEventListener("input", renderUsers);
+
+$("refreshBtn").addEventListener("click", () => {
+  loadData();
+  toast("Ma’lumotlar yangilandi");
+});
+
+$("settingsRefresh").addEventListener("click", () => {
+  loadData();
+  toast("Ma’lumotlar yangilandi");
+});
+
+$("exportBtn").addEventListener("click", exportCSV);
+$("settingsExport").addEventListener("click", exportCSV);
+
+function toggleTheme() {
+  const next =
+    document.documentElement.dataset.theme === "dark"
+      ? "light"
+      : "dark";
+
+  document.documentElement.dataset.theme = next;
+  localStorage.setItem(KEYS.theme, next);
+  $("themeBtn").textContent = next === "dark" ? "☼" : "☾";
+}
+
+$("themeBtn").addEventListener("click", toggleTheme);
+$("settingsTheme").addEventListener("click", toggleTheme);
+
+$("menuBtn").addEventListener("click", () => {
+  $("sidebar").classList.toggle("open");
+});
+
+$("openSite").addEventListener("click", () => {
+  location.href = "./index.html";
+});
+
+document.documentElement.dataset.theme =
+  localStorage.getItem(KEYS.theme) || "dark";
+
+$("themeBtn").textContent =
+  document.documentElement.dataset.theme === "dark" ? "☼" : "☾";
+
+loadData();
+
+window.addEventListener("storage", event => {
+  if (Object.values(KEYS).includes(event.key)) {
+    loadData();
+  }
+});
+</script>
+</body>
+</html>
